@@ -8,7 +8,7 @@ export default class Tree {
     buildTree(array) {
         // Sort and remove duplicates
         const uniqueSortedArray = [...new Set(array)].sort((a, b) => a - b);
-        console.log(uniqueSortedArray);
+
         return this.buildTreeHelper(
             uniqueSortedArray,
             0,
