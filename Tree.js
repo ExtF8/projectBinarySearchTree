@@ -19,13 +19,9 @@ export default class Tree {
      */
     buildTree(array) {
         // Sort and remove duplicates
-        const uniqueSortedArray = [...new Set(array)].sort((a, b) => a - b);
+        const sortedArray = [...new Set(array)].sort((a, b) => a - b);
 
-        return this.buildTreeHelper(
-            uniqueSortedArray,
-            0,
-            uniqueSortedArray.length - 1
-        );
+        return this.#buildTreeHelper(sortedArray, 0, sortedArray.length - 1);
     }
 
     /**
@@ -35,15 +31,15 @@ export default class Tree {
      * @param { number } end - The ending index of the current subarray.
      * @returns { Node } The root node of the built subtree.
      */
-    buildTreeHelper(array, start, end) {
+    #buildTreeHelper(array, start, end) {
         if (start > end) {
             return null;
         }
 
         const mid = Math.floor((start + end) / 2);
         const node = new Node(array[mid]);
-        node.left = this.buildTreeHelper(array, start, mid - 1);
-        node.right = this.buildTreeHelper(array, mid + 1, end);
+        node.left = this.#buildTreeHelper(array, start, mid - 1);
+        node.right = this.#buildTreeHelper(array, mid + 1, end);
 
         return node;
     }
@@ -54,7 +50,7 @@ export default class Tree {
      * @param { number } value - The value to be inserted.
      */
     insert(value) {
-        this.root = this.insertRecursively(this.root, value);
+        this.root = this.#insertRecursively(this.root, value);
     }
 
     /**
@@ -64,7 +60,7 @@ export default class Tree {
      * @param { number } value - The value to be inserted.
      * @returns { Node } - The updated node after insertion.
      */
-    insertRecursively(node, value) {
+    #insertRecursively(node, value) {
         // If the tree is empty, return a new node
         if (node === null) {
             return new Node(value);
@@ -72,21 +68,24 @@ export default class Tree {
 
         // Otherwise, recursively traverse the tree
         if (value < node.data) {
-            node.left = this.insertRecursively(node.left, value);
+            node.left = this.#insertRecursively(node.left, value);
         } else if (value > node.data) {
-            node.right = this.insertRecursively(node.right, value);
+            node.right = this.#insertRecursively(node.right, value);
         }
 
         return node;
     }
 
     /**
-     * Deletes a node with the specified value from the tree.
+     * Deletes a node with the specified value from the binary search tree.
      *
      * @param { number } value - The value of the node to be deleted.
+     * @returns { string } - A message indicating that the node with the specified value was found and deleted.
      */
     deleteNode(value) {
-        this.root = this.findAndDeleteNode(this.root, value);
+        this.root = this.#findAndDeleteNode(this.root, value);
+        const message = `Node with value ${value} found and deleted `;
+        return message;
     }
 
     /**
@@ -95,7 +94,7 @@ export default class Tree {
      * @param { number } value - The value to be deleted from the binary search tree.
      * @returns { Node } - The root node of the modified binary search tree.
      */
-    findAndDeleteNode(node, value) {
+    #findAndDeleteNode(node, value) {
         // Base case
         if (node === null) {
             return null;
@@ -103,11 +102,11 @@ export default class Tree {
 
         // If the node to delete is smaller than the node value
         if (value < node.data) {
-            node.left = this.findAndDeleteNode(node.left, value);
+            node.left = this.#findAndDeleteNode(node.left, value);
         }
         // If the node to delete is bigger than the node value
         else if (value > node.data) {
-            node.right = this.findAndDeleteNode(node.right, value);
+            node.right = this.#findAndDeleteNode(node.right, value);
         }
         // If value is same as node
         else {
@@ -119,11 +118,11 @@ export default class Tree {
             }
 
             // Find the minimum value in the right subtree (successor)
-            let successor = this.findMin(node.right);
+            let successor = this.#findMin(node.right);
             // Replace the node's data with successor's data
             node.data = successor.data;
             // Delete the successor node from the right subtree
-            node.right = this.findAndDeleteNode(node.right, successor.data);
+            node.right = this.#findAndDeleteNode(node.right, successor.data);
         }
 
         return node;
@@ -136,7 +135,7 @@ export default class Tree {
      * @returns { Node|null } - The found node, or null if the value is not found.
      */
     find(value) {
-        return this.findNode(this.root, value);
+        return this.#findNode(this.root, value);
     }
 
     /**
@@ -146,7 +145,7 @@ export default class Tree {
      * @param {number} value - The value to search for.
      * @returns {Node|null} - The node with the given value, or null if not found.
      */
-    findNode(node, value) {
+    #findNode(node, value) {
         if (node === null) {
             return null;
         }
@@ -154,9 +153,9 @@ export default class Tree {
         if (value === node.data) {
             return node;
         } else if (value < node.data) {
-            return this.findNode(node.left, value);
+            return this.#findNode(node.left, value);
         } else {
-            return this.findNode(node.right, value);
+            return this.#findNode(node.right, value);
         }
     }
 
@@ -205,7 +204,7 @@ export default class Tree {
      * @returns { void }
      */
     inOrder(callback) {
-        return this.inOrderTraversal(this.root, callback);
+        return this.#inOrderTraversal(this.root, callback);
     }
 
     /**
@@ -215,7 +214,7 @@ export default class Tree {
      * @param { Function } [callback] - Optional callback function to be called for each visited node.
      * @returns { Array } - An array containing the values of the visited nodes in the order they were visited.
      */
-    inOrderTraversal(node, callback) {
+    #inOrderTraversal(node, callback) {
         if (node === null) {
             return [];
         }
@@ -224,7 +223,7 @@ export default class Tree {
 
         // Traverse the left subtree
         if (node.left) {
-            result.push(...this.inOrderTraversal(node.left, callback));
+            result.push(...this.#inOrderTraversal(node.left, callback));
         }
 
         // Visit current node
@@ -236,7 +235,7 @@ export default class Tree {
 
         // Traverse the right subtree
         if (node.right) {
-            result.push(...this.inOrderTraversal(node.left, callback));
+            result.push(...this.#inOrderTraversal(node.right, callback));
         }
 
         return result;
@@ -249,7 +248,7 @@ export default class Tree {
      * @returns {void}
      */
     preOrder(callback) {
-        return this.preOrderTraversal(this.root, callback);
+        return this.#preOrderTraversal(this.root, callback);
     }
 
     /**
@@ -259,7 +258,7 @@ export default class Tree {
      * @param { Function } [callback] - Optional callback function to be executed for each visited node.
      * @returns { Array } - An array containing the values of the visited nodes in pre-order.
      */
-    preOrderTraversal(node, callback) {
+    #preOrderTraversal(node, callback) {
         if (node === null) {
             return [];
         }
@@ -275,12 +274,12 @@ export default class Tree {
 
         // Traverse the left subtree
         if (node.left) {
-            result.push(...this.preOrderTraversal(node.left, callback));
+            result.push(...this.#preOrderTraversal(node.left, callback));
         }
 
         // Traverse the right subtree
         if (node.right) {
-            result.push(...this.preOrderTraversal(node.left, callback));
+            result.push(...this.#preOrderTraversal(node.right, callback));
         }
 
         return result;
@@ -294,7 +293,7 @@ export default class Tree {
      * @returns { void }
      */
     postOrder(callback) {
-        return this.postOrderTraversal(this.root, callback);
+        return this.#postOrderTraversal(this.root, callback);
     }
 
     /**
@@ -303,7 +302,7 @@ export default class Tree {
      * @param { Function } [callback] - Optional callback function to be executed on each visited node.
      * @returns { Array } - An array containing the nodes visited during the traversal.
      */
-    postOrderTraversal(node, callback) {
+    #postOrderTraversal(node, callback) {
         if (node === null) {
             return [];
         }
@@ -312,12 +311,12 @@ export default class Tree {
 
         // Traverse the left subtree
         if (node.left) {
-            result.push(...this.postOrderTraversal(node.left, callback));
+            result.push(...this.#postOrderTraversal(node.left, callback));
         }
 
         // Traverse the right subtree
         if (node.right) {
-            result.push(...this.postOrderTraversal(node.left, callback));
+            result.push(...this.#postOrderTraversal(node.right, callback));
         }
 
         // Visit current node
@@ -358,7 +357,7 @@ export default class Tree {
      * @returns { number } - The depth of the node.
      */
     depth(node) {
-        return this.calculateDepth(this.root, node, 0);
+        return this.#calculateDepth(this.root, node, 0);
     }
 
     /**
@@ -369,7 +368,7 @@ export default class Tree {
      * @param { number } currentDepth - The current depth of the tree.
      * @returns { number } - The depth of the target node. Returns -1 if the target node is not found.
      */
-    calculateDepth(currentNode, targetNode, currentDepth) {
+    #calculateDepth(currentNode, targetNode, currentDepth) {
         if (currentNode === null) {
             // Target node not found, return -1
             return -1;
@@ -381,12 +380,12 @@ export default class Tree {
         }
 
         // Recursively search in the left and right subtrees
-        const leftDepth = this.calculateDepth(
+        const leftDepth = this.#calculateDepth(
             currentNode.left,
             targetNode,
             currentDepth + 1
         );
-        const rightDepth = this.calculateDepth(
+        const rightDepth = this.#calculateDepth(
             currentNode.right,
             targetNode,
             currentDepth + 1
@@ -404,7 +403,7 @@ export default class Tree {
      * @returns { boolean } True if the tree is balanced, false otherwise.
      */
     isBalanced() {
-        return this.checkBalanced(this.root) !== -1;
+        return this.#checkBalanced(this.root) !== -1;
     }
 
     /**
@@ -414,19 +413,19 @@ export default class Tree {
      * @param { Node } node - The root node of the binary search tree to check.
      * @returns { number } The height of the binary search tree if it is balanced, or -1 if it is unbalanced.
      */
-    checkBalanced(node) {
+    #checkBalanced(node) {
         if (node === null) {
             // Height of null node is 0
             return 0;
         }
 
-        const leftHeight = this.checkBalanced(node.left);
+        const leftHeight = this.#checkBalanced(node.left);
         if (leftHeight === -1) {
             // Left subtree is unbalanced
             return -1;
         }
 
-        const rightHeight = this.checkBalanced(node.right);
+        const rightHeight = this.#checkBalanced(node.right);
         if (rightHeight === -1) {
             // Right subtree is unbalanced
             return -1;
@@ -444,34 +443,21 @@ export default class Tree {
         return result;
     }
 
+    /**
+     * Rebalance the binary search tree.
+     * Extracts values from the tree using an in-order traversal,
+     * clears the existing tree structure, and rebuilds the tree
+     * with a balanced structure.
+     */
     rebalance() {
-        // Extract values from the tree using an in-order traversal
-        const values = this.inOrderTraversal(this.root);
+        // Extract values from the tree using an in-order
+        const inOrderList = this.inOrder();
 
         // Clear the existing tree structure
         this.root = null;
 
         // Rebuild the tree with balanced structure
-        this.root = this.buildBalancedTree(values);
-    }
-
-    buildBalancedTree(values) {
-        if (values.length === 0) {
-            return null;
-        }
-
-        // Find the median value
-        const mid = Math.floor(values.length / 2);
-        const median = values[mid];
-
-        // Create a new node with the median value
-        const node = new Node(median);
-
-        // Recursively build the left and right subtrees
-        node.left = this.buildBalancedTree(values.slice(0, mid));
-        node.right = this.buildBalancedTree(values.slice(mid + 1));
-
-        return node;
+        this.root = this.buildTree(inOrderList);
     }
 
     /**
@@ -480,7 +466,7 @@ export default class Tree {
      * @param { Node } node - The root node of the binary search tree.
      * @returns { Node } - The node with the minimum value.
      */
-    findMin(node) {
+    #findMin(node) {
         while (node.left !== null) {
             node = node.left;
         }
