@@ -25,7 +25,7 @@ This project is part of [The Odin Project](https://www.theodinproject.com/lesson
 
 ## Usage
 
-To get started with the LinkedList project, follow these steps:
+To get started with the Binary Search Trees project, follow these steps:
 
 1. Clone the repository to your local machine using the following command:
     ```
@@ -33,7 +33,7 @@ To get started with the LinkedList project, follow these steps:
     ```
 2. Navigate to the project directory:
     ```
-    cd projectLinkedLists
+    cd projectBinarySearchTree
     ```
 3. Running Tests:
 
